@@ -63,10 +63,7 @@ export default function App() {
                         onChange={() =>
                           onChangeHandler(questions[questionNum].id, option)
                         }
-                        checked={
-                          answer[questions[questionNum].correctAnswer] ===
-                          option
-                        }
+                        checked={answer[questions[questionNum].id] === option}
                       />
                       {option}
                     </li>
