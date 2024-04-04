@@ -1,10 +1,10 @@
 import { useState } from "react";
+import "./App.css";
 
 export default function App() {
-  const [questionNum, setQuestionNum] = useState(0);
-  const [answer, setAnswers] = useState({});
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedOptions, setSelectedOptions] = useState("");
   const [score, setScore] = useState(0);
-  const [formSubmitted, setFormSubmitted] = useState(false);
   const questions = [
     {
       id: 1,
@@ -26,69 +26,60 @@ export default function App() {
     },
   ];
 
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    if (questionNum < questions.length) {
-      setQuestionNum(questionNum + 1);
-    }
-    if (questionNum === questions.length) {
-      setFormSubmitted(true);
-    }
-  };
-
-  const onChangeHandler = (questionId, option) => {
-    setAnswers({ ...answer, [questionId]: option });
-    if (questions[questionId - 1].correctAnswer === option) {
-      if (score < questions.length) {
+  const QuizApp = () => {
+    const clickHandler = () => {
+      setCurrentQuestion(currentQuestion + 1);
+      if (questions[currentQuestion].correctAnswer === selectedOptions) {
         setScore(score + 1);
       }
-    }
-  };
+      setSelectedOptions(" ");
+    };
 
-  const Questions = () => {
+    const onChangeHandler = (event) => {
+      let { value } = event.target;
+
+      setSelectedOptions(value);
+    };
+
     return (
       <div>
-        {!formSubmitted && questionNum < questions.length ? (
-          <form onSubmit={handleFormSubmit}>
-            <div>
-              <p>{questions[questionNum].question}</p>
-              <ul>
-                {questions[questionNum].options.map((option, index) => {
-                  return (
-                    <li key={`${questions[questionNum].id}-${index}`}>
-                      <input
-                        type="radio"
-                        value={option}
-                        name={questions[questionNum].id}
-                        onChange={() =>
-                          onChangeHandler(questions[questionNum].id, option)
-                        }
-                        checked={
-                          answer[questions[questionNum].correctAnswer] ===
-                          option
-                        }
-                      />
-                      {option}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-            <button type="submit">Next</button>
-          </form>
+        <h1>Quiz App</h1>
+        {currentQuestion < questions.length ? (
+          <>
+            <h2>Question {questions[currentQuestion].id}</h2>
+            <p>{questions[currentQuestion].question}</p>
+            <ul>
+              {questions[currentQuestion].options.map((option, index) => {
+                return (
+                  <li key={index}>
+                    <input
+                      type="radio"
+                      value={option}
+                      name={`question${questions[currentQuestion].id}`}
+                      onChange={onChangeHandler}
+                    />{" "}
+                    {option}
+                  </li>
+                );
+              })}
+            </ul>
+
+            <button onClick={() => clickHandler()}>Next</button>
+          </>
         ) : (
-          <div>
-            <p>Your Score: {score}/3</p>
-          </div>
+          <>
+            <h2>Quiz Result</h2>
+            <p>
+              Your score: {score}/{questions.length}{" "}
+            </p>
+          </>
         )}
       </div>
     );
   };
   return (
     <main>
-      <h1>Quiz App</h1>
-
-      <Questions />
+      <QuizApp />
     </main>
   );
 }
